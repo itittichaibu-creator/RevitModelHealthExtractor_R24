@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งาน Model Health Extractor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ec4899;
+            --primary-hover: #db2777;
+            --bg: #f3f4f6;
+            --surface: rgba(255, 255, 255, 0.85);
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --border: #e5e7eb;
+            --icon-revit: #0284c7;
+            --icon-navisworks: #16a34a;
+            --icon-dynamo: #7e22ce;
+        }
+
+        body {
+            font-family: 'Prompt', 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(to right, #f472b6, #fb7185, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary-hover);
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--surface);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.1), 0 2px 4px -1px rgba(236, 72, 153, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.15), 0 4px 6px -2px rgba(236, 72, 153, 0.05);
+            border-color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            background-color: rgba(236, 72, 153, 0.1);
+            color: var(--primary-hover);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .badge-success { background-color: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.4); }
+        .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: #d97706; border-color: rgba(245, 158, 11, 0.4); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: #dc2626; border-color: rgba(239, 68, 68, 0.4); }
+        .badge-dynamo { background-color: rgba(126, 34, 206, 0.15); color: #7e22ce; border-color: rgba(126, 34, 206, 0.4); }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            line-height: 1;
+            top: -2px;
+        }
+
+        strong {
+            color: var(--primary-hover);
+        }
+
+        .code-block {
+            background-color: #FFE8E8;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #d9534f;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .flex-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        /* Simulation CSS */
+        .sim-container { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .sim-side { flex: 1; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; background-color: #ffffff; }
+        .sim-header-right { color: #059669; font-weight: 600; margin-bottom: 0.75rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
+        .row-group { background-color: #f3f4f6; }
+        .row-group td { font-weight: 600; border-top: 1px solid #e5e7eb; }
+        .row-cat { background-color: #f9fafb; font-style: italic; }
+        .sim-table { width: 100%; border-collapse: collapse; }
+        .sim-table th { text-align: left; padding: 0.5rem; color: #4b5563; border-bottom: 2px solid #e5e7eb; font-weight: 600; }
+        .sim-table td { padding: 0.5rem; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+        .scenario-title { color: var(--primary-hover); font-weight: 600; margin-top: 1.5rem; }
+        
+        /* ── Table styles ── */
+        .tbl { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+        .tbl th { background: rgba(236,72,153,0.1); padding: 0.6rem 1rem; text-align: left; font-weight: 600; }
+        .tbl td { padding: 0.5rem 1rem; border-bottom: 1px solid #e5e7eb; }
+        .tbl-muted { color: var(--text-muted); }
+
+        .footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            text-align: center;
+            font-weight: bold;
+            color: black;
+            font-size: 1rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>คู่มือการใช้งาน Model Health Extractor</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">เครื่องมือวิเคราะห์สุขภาพโมเดล Revit และส่งออกแบบอัตโนมัติลง Excel ผ่าน Dynamo</p>
+        </header>
+
+        <section>
+            <h2>1. ภาพรวมการทำงาน (Overview)</h2>
+            <p style="color: var(--text-main); margin-bottom: 1.5rem;">
+                สคริปต์ Dynamo Python Node สำหรับสแกนเจาะลึกโมเดล Revit แบบ 360 องศา ครอบคลุมตั้งแต่ Warnings, Families, Groups, CAD Links ไปจนถึงข้อมูลเบื้องลึกที่หาดูยาก พร้อมระบบ <strong>"กันตาย (Bulletproof)"</strong> ที่หลบเลี่ยง Bug ของ Revit API และส่งออกข้อมูลลงไฟล์ Excel อย่างเป็นระเบียบด้วยระบบ Outline Grouping
+            </p>
+        </section>
+
+        <section>
+            <h2>2. สิ่งที่ต้องเตรียมพร้อม (Prerequisites)</h2>
+            <div class="card card-warning">
+                <h3><span class="badge badge-warning">สำคัญ</span> การติดตั้ง openpyxl สำหรับ Dynamo</h3>
+                <p>เนื่องจากโค้ดชุดนี้มีการเขียนไฟล์ <code>.xlsx</code> โดยตรงแบบไม่พึ่งพาโหนดของ Dynamo พื้นฐาน (เพื่อหลีกเลี่ยงบั๊กการรวมเซลล์) <strong>ผู้ใช้งานจึงต้องมีไลบรารี <code>openpyxl</code> ติดตั้งอยู่ใน Python Environment ของ Dynamo</strong></p>
+                <ul>
+                    <li>สำหรับ Dynamo 2.13+ (CPython3): ให้ทำการ <code>pip install openpyxl</code> ในโฟลเดอร์ Python ของ Dynamo</li>
+                    <li>หรือคัดลอกโฟลเดอร์ <code>openpyxl</code> ไปวางไว้ในพาธที่ Dynamo เรียกใช้งาน (เช่น <code>C:\Users\Username\AppData\Roaming\Dynamo\Dynamo Revit\2.xx\packages</code>)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. วิธีการนำไปใช้งาน (How to Use)</h2>
+            <div class="card card-primary">
+                <h3><span class="badge badge-dynamo">ขั้นตอนการตั้งค่า Node ใน Dynamo</span></h3>
+                <p>คัดลอกโค้ด <code>dynamo_extractor_node_final.py</code> ไปวางใน <strong>Python Script</strong> โหนด โดยตั้งค่าช่องเสียบสายสัญญาณ (Input Ports) ดังนี้:</p>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Input Port</th>
+                            <th>ประเภทข้อมูล (Type)</th>
+                            <th>หน้าที่</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>IN[0]</code></td><td>Boolean (True/False)</td><td>สวิตช์เปิด/ปิดการทำงานของ Script (ตั้งเป็น True เพื่อให้ทำงาน)</td></tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    * เมื่อรัน Script จะมีหน้าต่าง <strong>Save File Dialog</strong> เด้งขึ้นมาให้คุณเลือกตำแหน่งและตั้งชื่อไฟล์ Excel ที่จะบันทึก หากเลือกไฟล์ที่มีอยู่เดิม โปรแกรมจะทำการ <strong>เขียนต่อท้าย (Append)</strong> เพื่อเก็บประวัติเปรียบเทียบข้อมูลย้อนหลัง
+                </p>
+                <div class="card card-warning" style="margin-top: 1rem; margin-bottom: 0;">
+                    <p style="margin: 0;"><strong>ข้อควรระวัง:</strong> แนะนำให้ตั้งค่าการรัน Dynamo เป็น <strong>"Manual"</strong> เสมอ เพื่อป้องกันไม่ให้หน้าต่าง Save File เด้งขึ้นมารบกวนตลอดเวลา</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>4. ทำความเข้าใจไฟล์รายงาน Excel (Output Explanation)</h2>
+            <p>รายงานจะถูกแบ่งออกเป็นชีต (Sheet) ต่างๆ ตามหมวดหมู่ข้อมูล ดังนี้:</p>
+
+            <div class="card">
+                <h3><span class="badge badge-success">ระบบจัดกลุ่มอัจฉริยะ (Outline Grouping)</span></h3>
+                <p>ในชีตที่มีข้อมูลเยอะ (เช่น Families, Groups, CAD Links) สคริปต์จะไม่ใช้การผสานเซลล์ (Merge Cells) เพราะจะทำให้การทำ Filter ใน Excel พัง แต่จะใช้ฟีเจอร์ <strong>Outline Group</strong> (+/-) ของ Excel แทน</p>
+                <ul>
+                    <li><strong>หมวดหมู่หลัก (Level 1):</strong> ระบุรอบวันที่การอัปเดต (คลิกปุ่ม <code>-</code> ที่ขอบซ้ายเพื่อพับเก็บข้อมูลทั้งหมด)</li>
+                    <li><strong>หมวดหมู่ย่อย (Level 2):</strong> ระบุกลุ่มของข้อมูล เช่น 📂 หมวดหมู่: Model Groups หรือ 👤 ผู้สร้าง: John Doe</li>
+                    <li><strong>แถวข้อมูล (Level 3):</strong> ข้อมูลระดับรายตัวของ Element</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🧪 ตารางตัวอย่างผลลัพธ์จำลอง (Mock Table)</h3>
+                <p style="margin-bottom: 1rem; color: var(--text-main);">ตัวอย่างด้านล่างแสดงให้เห็นว่าข้อมูลถูกจัดกลุ่มแบบ Outline Grouping อย่างไรใน Excel โดยไม่ใช้การ Merge Cell:</p>
+
+                <h4 class="scenario-title">ตัวอย่างข้อมูล Groups</h4>
+                <div class="sim-container">
+                    <div class="sim-side">
+                        <div class="sim-header-right">✅ ผลลัพธ์ในไฟล์ Excel</div>
+                        <table class="sim-table">
+                            <thead><tr><th>Group Name</th><th>Group Category</th><th>Placement Count</th><th>Member Count</th><th>Creator</th></tr></thead>
+                            <tbody>
+                                <tr class="row-group"><td colspan="5">--- 🕒 รอบการอัปเดต: 2026-06-16 12:00:00 ---</td></tr>
+                                <tr class="row-cat"><td colspan="5">--- 📂 หมวดหมู่: Model Groups ---</td></tr>
+                                <tr><td style="padding-left: 2rem;">Typical Apartment</td><td>Model Groups</td><td>15</td><td>42</td><td>ittichai.b</td></tr>
+                                <tr><td style="padding-left: 2rem;">Unit Type B</td><td>Model Groups</td><td>8</td><td>30</td><td>ittichai.b</td></tr>
+                                <tr class="row-cat"><td colspan="5">--- 📂 หมวดหมู่: Detail Groups ---</td></tr>
+                                <tr><td style="padding-left: 2rem;">Fire Rating Legend</td><td>Detail Groups</td><td>2</td><td>5</td><td>john.doe</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><span class="badge badge-warning">รายละเอียดแต่ละ Sheet</span></h3>
+                <ul>
+                    <li><strong>Summary:</strong> ภาพรวมสุขภาพโมเดล แสดงขนาดไฟล์ (MB) และจำนวนไอเทมรวมในทุกหมวดหมู่ ใช้สำหรับประเมินความหนักของโมเดลอย่างรวดเร็ว</li>
+                    <li><strong>Warnings:</strong> รายการแจ้งเตือนทั้งหมด พร้อม Severity (ความรุนแรง) และ Element ID ของตัวต้นเหตุ</li>
+                    <li><strong>InPlaceFamilies:</strong> ครอบครัวนอกคอก (In-Place) ซึ่งกินทรัพยากรเครื่องสูงมาก จัดกลุ่มตาม Category เพื่อหว่านหาเป้าหมายในการแก้เป็น Loadable Family</li>
+                    <li><strong>LoadableFamilies:</strong> รวบรวม Family ทั้งหมดในโมเดล พร้อมนับจำนวน Placement Count อย่างแม่นยำ</li>
+                    <li><strong>Groups:</strong> ข้อมูล Model Group และ Detail Group พร้อมจำนวนการวาง (Placement Count) และจำนวนของข้างใน (Member Count) <em>*ติดตั้งระบบบายพาสแก้บั๊ก `property cannot be read` ของ Revit ไว้แล้ว</em></li>
+                    <li><strong>CADLinks & LineStylesAndPatterns:</strong> ตามล่าหาขยะ CAD ที่หลงเหลืออยู่ในโมเดล โดยจัดกลุ่มตาม <strong>"ชื่อผู้สร้าง (Creator)"</strong> หากพบชื่อแปลกๆ หรือมาจากไฟล์ .dwg ระบบจะขึ้นแท็ก <code>Is Suspicious = Yes</code> ทันที</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>5. การแก้ปัญหาเบื้องต้น (Troubleshooting)</h2>
+            <div class="card card-danger">
+                <ul>
+                    <li><strong>ไม่มีอะไรอัปเดตลง Excel เลย:</strong> ให้ตรวจสอบว่าคุณ <em>"ปิด"</em> ไฟล์ Excel ปลายทางก่อนที่จะกดรันสคริปต์ใน Dynamo หรือยัง? (หากเปิดค้างไว้ สคริปต์จะถูกปฏิเสธสิทธิ์ในการเขียนทับไฟล์)</li>
+                    <li><strong>ชื่อ Group เขียนว่า Error Reading...:</strong> เกิดจากปัญหาลึกในชั้น Python.NET ของ Dynamo สคริปต์มีการอัปเดตให้หลบเลี่ยงปัญหานี้แล้ว หากยังพบ ให้ตรวจสอบว่ามีการอัปเดต Dynamo เวอร์ชันใหม่ล่าสุดหรือไม่</li>
+                    <li><strong>เปิด Excel ไม่ได้ (Corrupted File):</strong> เกิดจากการใส่เครื่องหมายเท่ากับ (<code>=</code>) นำหน้าข้อความ ทำให้ Excel มองว่าเป็นสูตร (Formula) สคริปต์แก้ไขให้ใช้ <code>---</code> นำหน้าแทนแล้ว กรุณาอย่าเปลี่ยนกลับในซอร์สโค้ด</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer class="footer">
+            © METRIC CONSULTING ENGINEERS AND ARCHITECTS CO.,LTD
+        </footer>
+    </div>
+</body>
+</html>

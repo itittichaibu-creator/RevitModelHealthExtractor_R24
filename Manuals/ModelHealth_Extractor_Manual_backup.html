@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งาน: Revit Model Health Extractor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased py-10 px-4 md:px-0">
+
+<div class="max-w-5xl mx-auto space-y-10">
+    
+    <!-- Hero Section -->
+    <div class="glass-card rounded-3xl p-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400"></div>
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">Revit Model <span class="text-blue-600">Health Extractor</span> <span class="text-2xl text-gray-500">(Dynamo/Python)</span></h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">เครื่องมือสกัดข้อมูลสุขภาพของโมเดล (Model Health) แบบอัตโนมัติสำหรับ Autodesk Revit 2024 ออกรายงานเป็น Excel ได้ทันที</p>
+    </div>
+
+    <!-- Installation & Usage -->
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-8">
+        <!-- Dynamo Python -->
+        <div class="glass-card rounded-2xl p-8 border-l-4 border-purple-500">
+            <h2 class="text-2xl font-bold mb-4 flex items-center"><span class="text-2xl mr-2">🐍</span> โหมด Dynamo / Python</h2>
+            <h3 class="font-semibold text-gray-800 mb-2">การติดตั้ง:</h3>
+            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-2 mb-4 text-sm">
+                <li>เปิดโปรแกรม Revit 2024 และเข้าไปที่โปรเจกต์ของคุณ</li>
+                <li>เครื่องมือนี้รันผ่าน <b>Dynamo</b> หรือ <b>Dynamo Player</b> โดยใช้ไฟล์ <code>.py</code> หรือ <code>.dyn</code> ที่ทีมงานเตรียมไว้ให้</li>
+                <li>ตรวจสอบให้แน่ใจว่าในคอมพิวเตอร์ของคุณมีการติดตั้งไลบรารี <code>openpyxl</code> สำหรับ Python ไว้แล้ว (เพื่อจัดการไฟล์ Excel)</li>
+            </ol>
+            <h3 class="font-semibold text-gray-800 mb-2">การใช้งาน:</h3>
+            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-2 text-sm">
+                <li>เปิดไฟล์โมเดล Revit ที่ต้องการตรวจสอบสุขภาพ</li>
+                <li>รันสคริปต์ <b>Model Health Extractor</b> ผ่านหน้าต่าง Dynamo</li>
+                <li>เมื่อมีหน้าต่างป๊อปอัปเด้งขึ้นมา ให้เลือก <b>ตำแหน่งโฟลเดอร์</b> ที่ต้องการบันทึกไฟล์รายงาน Excel (<code>.xlsx</code>)</li>
+                <li>กรอก <b>Extraction Note</b> (หมายเหตุหรือเฟสการทำงาน เช่น <i>Pre-Submission</i>, <i>50% DD</i>)</li>
+                <li>รอสคริปต์ทำงานจนเสร็จ ข้อมูลจะถูกเขียนและจัดกลุ่มลงในตาราง Excel โดยอัตโนมัติ</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Features & Settings -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-card rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center"><span class="text-2xl mr-2">📊</span> ข้อมูลที่สามารถสกัดได้</h2>
+            <ul class="space-y-4 text-gray-700">
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-3">1</span>
+                    <div>
+                        <strong class="text-gray-900">Warnings & Errors</strong><br>รวบรวมจำนวนและรายการ Warnings ทั้งหมดที่มีในโปรเจกต์
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-3">2</span>
+                    <div>
+                        <strong class="text-gray-900">Views & Sheets</strong><br>สกัดข้อมูล Views และ Sheets เพื่อเช็คความเรียบร้อยของการจัดหน้า
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-3">3</span>
+                    <div>
+                        <strong class="text-gray-900">Linked Files & CAD</strong><br>รายการ Revit Links และ CAD Links (พร้อมเช็คสถานะ Pinned/Loaded)
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="glass-card rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center"><span class="text-2xl mr-2">🎯</span> จุดเด่นและข้อควรระวัง</h2>
+            
+            <div class="space-y-3">
+                <div class="flex items-start p-3 rounded-lg bg-gray-50 border border-gray-100 shadow-sm">
+                    <div class="mr-3 mt-1">📌</div>
+                    <div><span class="font-semibold text-gray-800">Creator Tracking:</span> <br><span class="text-sm text-gray-600">สามารถติดตามชื่อผู้สร้าง (Worksharing User) ในรายการ Views, Sheets, CAD Links และ Line Styles ได้ทันที</span></div>
+                </div>
+                <div class="flex items-start p-3 rounded-lg bg-gray-50 border border-gray-100 shadow-sm">
+                    <div class="mr-3 mt-1">📌</div>
+                    <div><span class="font-semibold text-gray-800">Append Data (บันทึกทับได้):</span> <br><span class="text-sm text-gray-600">ระบบรองรับการเพิ่มข้อมูลลงในไฟล์ Excel ตัวเดิม เพื่อเปิด-ปิดดูประวัติการดึงข้อมูลเปรียบเทียบในแต่ละรอบ (Phase) ได้สะดวกขึ้น</span></div>
+                </div>
+                <div class="flex items-start p-3 rounded-lg bg-gray-50 border border-gray-100 shadow-sm border-l-4 border-yellow-400">
+                    <div class="mr-3 mt-1">⚠️</div>
+                    <div><span class="font-semibold text-gray-800">ข้อควรระวัง:</span> <br><span class="text-sm text-gray-600">รองรับโมเดลที่อยู่บน Local, Revit Server และ Cloud Model ตรวจสอบว่าโมเดลได้ทำการ Sync ล่าสุดแล้วก่อนสกัดข้อมูลเพื่อความแม่นยำ</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer style="text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+        <p style="color: black; font-weight: bold; font-size: 1rem;">&copy; METRIC CONSULTING ENGINEERS AND ARCHITECTS CO.,LTD</p>
+    </footer>
+    
+</div>
+
+</body>
+</html>
